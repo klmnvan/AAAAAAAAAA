@@ -8,13 +8,13 @@ import kotlinx.coroutines.flow.flow
 import java.io.IOException
 
 class PostsRepositoryImpl(
-    private val api: PostsApi
+    private val api: PostsService
 ) : PostsRepository {
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override suspend fun sendCodeEmail(email: String): Flow<Result<String>> {
         return flow {
-            val rickAndMortyFromApi = try {
+            val response = try {
                 api.sendCode(email)
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -29,7 +29,29 @@ class PostsRepositoryImpl(
                 emit(Result.Error(message = "Error loading products"))
                 return@flow
             }
-            emit(Result.Success(rickAndMortyFromApi))
+            emit(Result.Success(response))
+        }
+    }
+
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+    override suspend fun checkCodeEmail(email: String, code: String): Flow<Result<String>> {
+        return flow {
+            val response = try {
+                api.signIn(email, code)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit( Result.Error(message = "Error loading products"))
+                return@flow
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(Result.Error(message = "Error loading products"))
+                return@flow
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emit(Result.Error(message = "Error loading products"))
+                return@flow
+            }
+            emit(Result.Success(response))
         }
     }
 

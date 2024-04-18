@@ -1,4 +1,4 @@
-package com.example.prodjectformc.api.notwork
+package com.example.prodjectformc.api
 
 object HttpRoutes {
     private const val BASE_URL = "https://jsonplaceholder.typicode.com"
